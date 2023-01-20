@@ -65,7 +65,7 @@ choose4:    mov A,R3
 loop:       mov A,#lo(array)        ; point to delay in the first array
             add A,offset            ; add the offset in R7 depending on the choice
             movp A,@A               ; look up the delay in milliseconds
-            mov delay,A             ; save it in R3
+            mov delaytm,A           ; save it in R3
 
 loop1:      mov A,#lo(array+1)      ; point to length in the first array
             add A,offset            ; add the offset in R7 depending on the choice
@@ -82,7 +82,7 @@ loop2:      mov A,pattern           ; retrieve the pointer to the LED pattern fr
             outl P1,A               ; output the pattern to port 1 to light the LEDs
 
             mov saveA,A             ; save the current value of A in R5
-            mov A,delay             ; get the delay value from R3
+            mov A,delaytm           ; get the delay value from R3
             mov count,A             ; move the delay value to the counter to R6
             mov A,saveA             ; restore the previous value of A from R5
 
