@@ -244,7 +244,7 @@ txtdone:    ret
 ; call delay                ; call the delay function
 ; uses R7 in register bank 1
 ;------------------------------------------------------------------------
-delay:      djnz R7,delay1
+delay:      djnz R7,delay
             ret
 
             org 0300H       ; page 3 of program memory
