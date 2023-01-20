@@ -10,7 +10,7 @@ CR          equ 0DH
 LF          equ 0AH
 
 pattern     reg R2                  ; pointer to the LED pattern
-delay       reg R3                  ; delay time in milliseconds
+delaytm     reg R3                  ; delay time in milliseconds
 length      reg R4                  ; length of the LED pattern
 saveA       reg R5                  ; register for saving contents of Accumulator
 count       reg R6                  ; loop counter
@@ -115,7 +115,7 @@ putch:      sel RB1
             anl P2,#7FH             ; make serial output low to send the start bit
             mov R6,#8               ; load R6 with the number of bits to send
             mov R7,#(58-2)/2        ; load the number of cycles to delay into R7
-            call delay1             ; delay 58 cycles
+            call delay              ; delay 58 cycles
             nop
 
             ;send bits 0-7
@@ -126,7 +126,7 @@ putch2:     orl P2,#80H             ; send "1"
             jmp putch3              ; makes the timing equal for both "0" and "1" bits
 putch3:     rr A                    ; rotate the next bit into position
             mov R7,#(56-2)/2        ; load the number of cycles to delay into R7
-            call delay1             ; delay 56 cycles
+            call delay              ; delay 56 cycles
             djnz R6,putch1          ; loop to send all 8 bits
 
             ;send the stop bit
@@ -134,7 +134,7 @@ putch3:     rr A                    ; rotate the next bit into position
             nop
             orl P2,#80H             ; make serial output high to send the stop bit
             mov R7,#(34-2)/2        ; load the number of cycles to delay into R7
-            call delay1             ; delay 34 cycles (1/2 bit time)
+            call delay              ; delay 34 cycles (1/2 bit time)
             sel RB0
             ret
 
@@ -148,11 +148,11 @@ getch:      sel RB1
             clr A                   ; start with A cleared
             mov R6,#8               ; load the number of bits to receive into R6
             mov R7,#(30-2)/2        ; load the number of cycles to delay into R7
-            call delay1             ; delay 30 cycles (1/2 bit time)
+            call delay              ; delay 30 cycles (1/2 bit time)
 
             ;get bits 0-7
 getch1:     mov R7,#(56-2)/2        ; load the number of cycles to delay into R7
-            call delay1             ; delay 56 cycles (1 bit time)
+            call delay              ; delay 56 cycles (1 bit time)
             jnt0 getch2             ; jump if the serial input is zero
             orl A,#01H              ; else, set the bit of the recieved character
             jmp getch3              ; skip the next part
@@ -163,7 +163,7 @@ getch3:     rr A                    ; rotate the bits in the received character 
 
             ;stop bit
             mov R7,#(34-2)/2        ; load the number of cycles to delay into R7
-            call delay1             ; delay 34 cycles (1/2 bit time) for the stop bit
+            call delay              ; delay 34 cycles (1/2 bit time) for the stop bit
             sel RB0
             ret
 
@@ -178,14 +178,14 @@ getche:     sel RB1
             clr A                   ; start with A cleared
             mov R6,#8               ; load the number of bits to receive into R6
             mov R7,#(26-2)/2        ; load the number of cycles to delay into R7
-            call delay1             ; delay 26 cycles (1/2 bit time)
+            call delay              ; delay 26 cycles (1/2 bit time)
             anl P2,#7FH             ; make serial output low to send the start bit
             mov R7,#(4-2)/2         ; load the number of cycles to delay into R7
-            call delay1             ; delay 4 cycles
+            call delay              ; delay 4 cycles
 
             ;get bits 0-7
 getche1:    mov R7,#(54-2)/2        ; load the number of cycles to delay into R7
-            call delay1             ; delay 54 cycles (1 bit time)
+            call delay              ; delay 54 cycles (1 bit time)
             jnt0 getche2            ; jump if the serial input is zero
             orl P2,#80H             ; send "1"
             orl A,#01H              ; else, set the bit of the recieved character
@@ -198,10 +198,10 @@ getche3:    rr A                    ; rotate the bits in the received character 
 
             ;stop bit
             mov R7,#(56-2)/2        ; load the number of cycles to delay into R7
-            call delay1             ; delay 56 cycles (1 bit time)
+            call delay              ; delay 56 cycles (1 bit time)
             orl P2,#80H             ; make serial output high to send the stop bit
             mov R7,#(56-2)/2        ; load the number of cycles to delay into R7
-            call delay1             ; delay 56 cycles (1 bit time) for the stop bit
+            call delay              ; delay 56 cycles (1 bit time) for the stop bit
             sel RB0
             ret
 
@@ -244,7 +244,7 @@ txtdone:    ret
 ; call delay                ; call the delay function
 ; uses R7 in register bank 1
 ;------------------------------------------------------------------------
-delay1:     djnz R7,delay1
+delay:      djnz R7,delay1
             ret
 
             org 0300H       ; page 3 of program memory
